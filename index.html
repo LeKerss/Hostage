@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b10">
+  <title>Operation Hostage</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="bg"></div>
+
+  <!-- START -->
+  <section class="screen" id="screen-start">
+    <h1 class="title" data-text="appTitle"></h1>
+    <button class="btn btn-primary" id="btn-start" data-text="startButton"></button>
+    <div class="history" id="history" hidden>
+      <span id="history-list"></span>
+      <button class="link" id="btn-reset" data-text="resetHistory"></button>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="screen screen-video" id="screen-video" hidden>
+    <video id="intro-video" playsinline preload="auto"></video>
+    <button class="btn btn-ghost skip" id="btn-skip" data-text="skipVideo"></button>
+  </section>
+
+  <!-- PICKING (roulette) -->
+  <section class="screen" id="screen-pick" hidden>
+    <h2 class="subtitle" id="pick-title"></h2>
+    <div class="avatar avatar-xl" id="pick-avatar"></div>
+    <div class="pick-name" id="pick-name"></div>
+  </section>
+
+  <!-- ASSIGNMENT -->
+  <section class="screen" id="screen-assign" hidden>
+    <div class="avatar avatar-lg" id="assign-avatar"></div>
+    <h2 class="pick-name" id="assign-name"></h2>
+    <p class="card assignment" id="assign-text"></p>
+    <button class="btn btn-primary" id="btn-ready" data-text="readyButton"></button>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="screen screen-question" id="screen-question" hidden>
+    <div class="q-header">
+      <span id="q-label"></span>
+      <span class="timer-num" id="timer-num"></span>
+    </div>
+    <div class="timer"><div class="timer-bar" id="timer-bar"></div></div>
+    <div class="q-body">
+      <img class="q-image" id="q-image" alt="" hidden>
+      <h2 class="q-text" id="q-text"></h2>
+    </div>
+    <div class="answers" id="answers"></div>
+  </section>
+
+  <!-- GAME OVER -->
+  <section class="screen screen-over" id="screen-over" hidden>
+    <p class="over-reason" id="over-reason"></p>
+    <h1 class="title glitch" data-text="gameOverTitle"></h1>
+    <p class="card" data-text="gameOverText"></p>
+    <button class="btn btn-primary" id="btn-rewind" data-text="rewindButton"></button>
+  </section>
+
+  <!-- VICTORY -->
+  <section class="screen" id="screen-win" hidden>
+    <h1 class="title win" data-text="victoryTitle"></h1>
+    <p class="card" data-text="victoryText"></p>
+    <button class="btn btn-primary" id="btn-reveal" data-text="revealButton"></button>
+  </section>
+
+  <!-- SECRET -->
+  <section class="screen screen-secret" id="screen-secret" hidden>
+    <h1 class="secret-title" id="secret-title"></h1>
+    <img class="secret-image" id="secret-image" alt="">
+    <button class="btn btn-ghost" id="btn-home" data-text="backToStart"></button>
+    <audio id="secret-music" loop preload="auto"></audio>
+  </section>
+
+  <div class="flash" id="flash"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
