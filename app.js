@@ -4,6 +4,8 @@
   const C = window.QUIZ_CONFIG;
   const T = C.texts;
   const STORAGE_KEY = "hostageQuiz.played";
+  const STAGE_KEY = "hostageQuiz.stage";
+  const DEADLINE_KEY = "hostageQuiz.huntDeadline";
 
   const $ = (id) => document.getElementById(id);
   const fill = (str, vars = {}) =>
@@ -19,7 +21,32 @@
   function savePlayed(list) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch {}
   }
+  // Open the page with "?reset" to wipe saved progress (handy for testing)
+  if (new URLSearchParams(location.search).has("reset")) {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STAGE_KEY);
+      localStorage.removeItem(DEADLINE_KEY);
+    } catch {}
+    history.replaceState(null, "", location.pathname);
+  }
+
   let played = loadPlayed();
+
+  // Progress after the quiz ("hunt" / "suspect"), so a refresh or a
+  // closed tab during the object hunt doesn't send everyone back to the quiz
+  function loadStage() {
+    try { return localStorage.getItem(STAGE_KEY) || ""; } catch { return ""; }
+  }
+  function saveStage(stage) {
+    try {
+      if (stage) localStorage.setItem(STAGE_KEY, stage);
+      else {
+        localStorage.removeItem(STAGE_KEY);
+        localStorage.removeItem(DEADLINE_KEY);
+      }
+    } catch {}
+  }
 
   // ---------------------------------------------------------------
   //  Randomness (crypto-grade, unbiased)
@@ -86,8 +113,103 @@
   document.title = T.appTitle;
   if (C.backgroundImage) $("bg").style.backgroundImage = `url("${C.backgroundImage}")`;
 
-  const video = $("intro-video");
-  video.src = C.introVideo || "";
+  // ---------------------------------------------------------------
+  //  Background music: whole game, except the suspect screen (the
+  //  alarm takes over). Browsers only allow sound after a tap, so every
+  //  tap (re)starts it if it should be playing: that also covers
+  //  resuming after a refresh.
+  // ---------------------------------------------------------------
+  const bgm = $("bg-music");
+  if (C.backgroundMusic) bgm.src = C.backgroundMusic;
+  bgm.volume = C.musicVolume ?? 0.4;
+
+  function syncAudio() {
+    const onSuspect = !$("screen-suspect").hidden;
+    const onFail = !$("screen-over").hidden; // only the fail sound there
+    if (C.backgroundMusic) {
+      if (onSuspect || onFail) bgm.pause();
+      else if (bgm.paused) bgm.play().catch(() => {});
+    }
+    if (C.suspect.music && onSuspect && music.paused) music.play().catch(() => {});
+  }
+  let muted = false;
+
+  // ---------------------------------------------------------------
+  //  Sound effects (gunshot on every tap, correct answer, mission
+  //  failed). Web Audio: no latency and shots can overlap on rapid taps.
+  //  Falls back to plain <audio> if the file can't be fetched (file://).
+  // ---------------------------------------------------------------
+  const S = C.sounds || {};
+  const sfxVolume = S.volume ?? 0.8;
+  const sfxBuffers = {};
+  const sfxFallback = {};
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const actx = AC ? new AC() : null;
+
+  // iPhone: play effects even when the silent switch is on, like the music
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch {}
+
+  async function loadSfx(name) {
+    const src = S[name];
+    if (!src) return;
+    try {
+      if (!actx) throw new Error("no Web Audio");
+      const res = await fetch(src);
+      if (!res.ok) throw new Error(res.status);
+      sfxBuffers[name] = await actx.decodeAudioData(await res.arrayBuffer());
+    } catch {
+      const a = new Audio(src);
+      a.preload = "auto";
+      sfxFallback[name] = a;
+    }
+  }
+  ["gunshot", "selecting", "found", "correct", "wrong", "fail"].forEach(loadSfx);
+
+  // Returns a function that stops the sound (used to cut the fail sound)
+  function playSfx(name) {
+    if (muted) return () => {};
+    const buf = sfxBuffers[name];
+    if (buf) {
+      if (actx.state !== "running") actx.resume();
+      const src = actx.createBufferSource();
+      const gain = actx.createGain();
+      src.buffer = buf;
+      gain.gain.value = sfxVolume;
+      src.connect(gain).connect(actx.destination);
+      src.start();
+      return () => { try { src.stop(); } catch {} };
+    }
+    if (sfxFallback[name]) {
+      const a = sfxFallback[name].cloneNode();
+      a.volume = sfxVolume;
+      a.play().catch(() => {});
+      return () => a.pause();
+    }
+    return () => {};
+  }
+
+  // Reticle drawn where the screen was tapped
+  function showReticle(x, y) {
+    const el = document.createElement("div");
+    el.className = "tap-reticle";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.innerHTML =
+      '<svg viewBox="0 0 60 60" aria-hidden="true">' +
+      '<circle cx="30" cy="30" r="18"/>' +
+      '<line x1="30" y1="4" x2="30" y2="18"/><line x1="30" y1="42" x2="30" y2="56"/>' +
+      '<line x1="4" y1="30" x2="18" y2="30"/><line x1="42" y1="30" x2="56" y2="30"/>' +
+      '<circle class="dot" cx="30" cy="30" r="2.2"/></svg>';
+    document.body.appendChild(el);
+    el.addEventListener("animationend", () => el.remove());
+  }
+
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("#btn-sound")) return;
+    syncAudio();
+    playSfx("gunshot");
+    showReticle(e.clientX, e.clientY);
+  });
 
   // Warm the cache so images appear instantly during the timed questions
   C.participants.forEach((p) => preload(p.photo));
@@ -95,7 +217,7 @@
     preload(q.image);
     q.answers.forEach((a) => preload(a.image));
   });
-  preload(C.secret.image);
+  preload(C.hunt.image);
 
   function renderHistory() {
     const box = $("history");
@@ -107,14 +229,19 @@
   $("btn-reset").onclick = () => {
     played = [];
     savePlayed(played);
+    saveStage("");
     renderHistory();
   };
 
   // ---------------------------------------------------------------
-  //  Flow: start -> briefing -> video -> pick -> assignment -> questions
+  //  Flow: start -> briefing -> pick -> assignment -> questions
   // ---------------------------------------------------------------
   $("btn-start").onclick = showBriefing;
-  $("btn-rewind").onclick = showBriefing;
+  $("btn-rewind").onclick = () => {
+    stopFailSound();
+    showBriefing();
+    syncAudio(); // main music back on
+  };
 
   const B = C.briefing || { lines: [] };
   const briefingFullText = B.lines.join("\n");
@@ -126,7 +253,7 @@
   $("briefing-caption").textContent = B.caption || "";
 
   function showBriefing() {
-    if (!briefingFullText && !B.photo) return playIntro();
+    if (!briefingFullText && !B.photo) return pickParticipant();
     const el = $("briefing-text");
     el.textContent = "";
     el.classList.add("typing");
@@ -156,33 +283,11 @@
 
   // Tap the dossier to skip the typing animation
   $("dossier").onclick = finishTyping;
-  $("btn-briefing").onclick = playIntro;
-
-  function playIntro() {
-    if (!C.introVideo) return pickParticipant();
-    introDone = false;
-    show("screen-video");
-    video.currentTime = 0;
-    // User tapped a button, so playing with sound is allowed.
-    // If the file is missing/unplayable, go straight to the draw.
-    video.play().catch(() => { if (video.error) endIntro(); });
-  }
-
-  let introDone = false;
-  function endIntro() {
-    if ($("screen-video").hidden || introDone) return;
-    introDone = true;
-    video.pause();
-    pickParticipant();
-  }
-  video.addEventListener("ended", endIntro);
-  video.addEventListener("error", endIntro);
-  $("btn-skip").onclick = endIntro;
+  $("btn-briefing").onclick = pickParticipant;
 
   let chosen = null;
 
   function pickParticipant() {
-    introDone = true;
     const pool = eligiblePool();
     chosen = pool[randomInt(pool.length)];
 
@@ -202,6 +307,7 @@
     screen.classList.remove("chosen");
     $("pick-title").textContent = T.pickingTitle;
     show("screen-pick");
+    const stopSelecting = playSfx("selecting"); // cut when the player is found
 
     let i = randomInt(reel.length);
     let delay = 60;
@@ -214,6 +320,8 @@
       if (delay < 480) {
         setTimeout(spin, delay);
       } else {
+        stopSelecting();
+        playSfx("found");
         setAvatar($("pick-avatar"), chosen);
         $("pick-name").textContent = chosen.name;
         $("pick-title").textContent = T.chosenIntro;
@@ -332,6 +440,7 @@
     if (i === q.correct) {
       btn.classList.add("correct");
       flash("green");
+      playSfx("correct");
       setTimeout(() => {
         qIndex++;
         if (qIndex < C.questions.length) showQuestion();
@@ -340,6 +449,7 @@
     } else {
       // The correct answer is NOT revealed, so the next agent can't cheat
       btn.classList.add("wrong");
+      playSfx("wrong");
       setTimeout(() => gameOver(T.wrongAnswer), 900);
     }
   }
@@ -347,41 +457,159 @@
   // ---------------------------------------------------------------
   //  Endings
   // ---------------------------------------------------------------
+  let stopFailSound = () => {};
+
   function gameOver(reason) {
     flash("red");
+    bgm.pause(); // silence the main music: only the fail sound plays
+    stopFailSound = playSfx("fail");
     if (navigator.vibrate) navigator.vibrate([200, 100, 400]);
     $("over-reason").textContent = reason;
-    introDone = false;
     renderHistory();
     show("screen-over");
   }
 
   function victory() {
-    introDone = false;
+    saveStage("hunt");
+    // Fresh countdown for this run (it starts when the hunt screen opens)
+    try { localStorage.removeItem(DEADLINE_KEY); } catch {}
     show("screen-win");
+
+    // Lock the button for a few seconds so nobody skips the instructions
+    const btn = $("btn-continue");
+    let left = C.hunt.victoryDelaySeconds || 0;
+    const update = () => {
+      btn.disabled = left > 0;
+      btn.textContent = left > 0 ? `${T.continueButton} (${left})` : T.continueButton;
+      if (left-- > 0) setTimeout(update, 1000);
+    };
+    update();
   }
 
-  const music = $("secret-music");
-  if (C.secret.music) music.src = C.secret.music;
+  // ---------------------------------------------------------------
+  //  Object hunt: find the item in the house, enter its secret code
+  // ---------------------------------------------------------------
+  const normalizeCode = (s) => String(s).replace(/\s+/g, "").toUpperCase();
+  const codeInput = $("code-input");
 
-  $("btn-reveal").onclick = () => {
-    $("secret-title").textContent = C.secret.title;
-    const img = $("secret-image");
-    img.hidden = !C.secret.image;
-    if (C.secret.image) img.src = C.secret.image;
-    show("screen-secret");
-    if (C.secret.music) {
+  if (C.hunt.image) $("hunt-image").src = C.hunt.image;
+  $("hunt-figure").hidden = !C.hunt.image;
+  $("hunt-image").onerror = () => ($("hunt-figure").hidden = true);
+  // All-digit code: show the phone's number pad
+  codeInput.inputMode = /^\d+$/.test(normalizeCode(C.hunt.code)) ? "numeric" : "text";
+
+  $("btn-continue").onclick = showHunt;
+
+  function showHunt() {
+    saveStage("hunt");
+    codeInput.value = "";
+    codeInput.classList.remove("invalid");
+    $("code-error").textContent = "";
+    show("screen-hunt");
+    startHuntTimer();
+  }
+
+  // Countdown stored as an absolute deadline, so a refresh doesn't reset it.
+  // At zero it shows "time's up" and counts overtime, but the code still
+  // works: the ending must always stay reachable.
+  let huntInterval = null;
+
+  function startHuntTimer() {
+    let deadline = 0;
+    try { deadline = Number(localStorage.getItem(DEADLINE_KEY)) || 0; } catch {}
+    if (!deadline) {
+      deadline = Date.now() + (C.hunt.seconds || 300) * 1000;
+      try { localStorage.setItem(DEADLINE_KEY, String(deadline)); } catch {}
+    }
+
+    const el = $("hunt-timer");
+    const mmss = (ms) => {
+      const s = Math.floor(ms / 1000);
+      return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    };
+    let wasOver = false;
+
+    const tick = () => {
+      const left = deadline - Date.now();
+      const over = left <= 0;
+      el.textContent = over ? "+" + mmss(-left) : mmss(left + 999);
+      el.classList.toggle("danger", !over && left <= 30000);
+      el.classList.toggle("over", over);
+      $("hunt-timeup").hidden = !over;
+      if (over && !wasOver) {
+        wasOver = true;
+        if (navigator.vibrate) navigator.vibrate([400, 150, 400]);
+      }
+    };
+    clearInterval(huntInterval);
+    tick();
+    huntInterval = setInterval(tick, 250);
+  }
+
+  codeInput.addEventListener("input", () => {
+    codeInput.classList.remove("invalid");
+    $("code-error").textContent = "";
+  });
+
+  $("code-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (normalizeCode(codeInput.value) === normalizeCode(C.hunt.code)) {
+      codeInput.blur();
+      clearInterval(huntInterval);
+      flash("green");
+      showSuspect(true);
+    } else {
+      codeInput.classList.remove("invalid");
+      void codeInput.offsetWidth; // restart shake animation
+      codeInput.classList.add("invalid");
+      $("code-error").textContent = T.codeWrong;
+      if (navigator.vibrate) navigator.vibrate(300);
+    }
+  });
+
+  // ---------------------------------------------------------------
+  //  Suspect reveal: photo only, the name is never shown
+  // ---------------------------------------------------------------
+  const music = $("suspect-music");
+  if (C.suspect.music) music.src = C.suspect.music;
+
+  function showSuspect(withSound) {
+    saveStage("suspect");
+    const suspect = C.participants.find((p) => p.role === "protected");
+    const host = C.participants.find((p) => p.role === "host");
+    setAvatar($("suspect-avatar"), { name: "?", photo: suspect && suspect.photo });
+    $("suspect-text").textContent = fill(T.suspectText, { host: host ? host.name : "" });
+    show("screen-suspect");
+    bgm.pause();
+    if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 600]);
+    if (C.suspect.music && withSound) {
       music.currentTime = 0;
       music.play().catch(() => {});
     }
-  };
+  }
 
   $("btn-home").onclick = () => {
     music.pause();
+    clearInterval(huntInterval);
     played = [];
     savePlayed(played);
+    saveStage("");
     renderHistory();
-    introDone = false;
     show("screen-start");
+    syncAudio();
   };
+
+  // Mute / unmute everything (music, alarm, sound effects)
+  $("btn-sound").onclick = () => {
+    muted = !muted;
+    bgm.muted = music.muted = muted;
+    $("btn-sound").textContent = muted ? "🔇" : "🔊";
+    $("btn-sound").classList.toggle("muted", muted);
+  };
+
+  // Resume where we left off after a refresh
+  const savedStage = loadStage();
+  if (savedStage === "hunt") showHunt();
+  // No sound on resume: browsers block audio until the user taps
+  else if (savedStage === "suspect") showSuspect(false);
 })();

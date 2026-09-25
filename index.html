@@ -40,13 +40,6 @@
     <button class="btn btn-primary" id="btn-briefing" data-text="briefingButton"></button>
   </section>
 
-  <!-- VIDÉO -->
-  <section class="screen screen-video" id="screen-video" hidden>
-    <video id="intro-video" playsinline preload="auto"></video>
-    <div class="video-tag" data-text="videoTag"></div>
-    <button class="btn btn-ghost skip" id="btn-skip" data-text="skipVideo"></button>
-  </section>
-
   <!-- TIRAGE AU SORT -->
   <section class="screen" id="screen-pick" hidden>
     <h2 class="subtitle" id="pick-title"></h2>
@@ -97,19 +90,49 @@
     <div class="stamp stamp-ok" data-text="victoryStamp"></div>
     <h1 class="title win" data-text="victoryTitle"></h1>
     <p class="panel" data-text="victoryText"></p>
-    <button class="btn btn-primary" id="btn-reveal" data-text="revealButton"></button>
+    <button class="btn btn-primary" id="btn-continue" data-text="continueButton"></button>
   </section>
 
-  <!-- ANNONCE SECRÈTE -->
-  <section class="screen screen-secret" id="screen-secret" hidden>
-    <div class="stamp stamp-ok" data-text="declassifiedStamp"></div>
-    <h1 class="secret-title" id="secret-title"></h1>
-    <img class="secret-image" id="secret-image" alt="">
-    <button class="btn btn-ghost" id="btn-home" data-text="backToStart"></button>
-    <audio id="secret-music" loop preload="auto"></audio>
+  <!-- RECHERCHE DE L'OBJET + CODE -->
+  <section class="screen" id="screen-hunt" hidden>
+    <div class="hunt-timer" id="hunt-timer"></div>
+    <p class="hunt-timeup" id="hunt-timeup" data-text="huntTimeUp" hidden></p>
+    <div class="stamp stamp-small-inline" data-text="huntStamp"></div>
+    <h2 class="subtitle" data-text="huntTitle"></h2>
+    <figure class="polaroid polaroid-hunt" id="hunt-figure">
+      <img id="hunt-image" alt="">
+    </figure>
+    <p class="panel" data-text="huntText"></p>
+    <form class="code-form" id="code-form" autocomplete="off">
+      <input class="code-input" id="code-input" type="text"
+             autocapitalize="characters" autocorrect="off" spellcheck="false"
+             enterkeyhint="done">
+      <button class="btn btn-primary" type="submit" data-text="codeButton"></button>
+    </form>
+    <p class="code-error" id="code-error" aria-live="polite"></p>
+  </section>
+
+  <!-- RÉVÉLATION DU SUSPECT -->
+  <section class="screen screen-suspect" id="screen-suspect" hidden>
+    <div class="alert-bar" data-text="alertBar"></div>
+    <div class="stamp stamp-fail" data-text="suspectStamp"></div>
+    <div class="target">
+      <div class="avatar avatar-xl" id="suspect-avatar"></div>
+      <div class="reticle"></div>
+    </div>
+    <div class="identity"><span data-text="suspectIdentity"></span><span class="redacted"></span></div>
+    <div class="dossier">
+      <div class="dossier-head" data-text="suspectHead"></div>
+      <p class="assignment" id="suspect-text"></p>
+    </div>
+    <button class="link" id="btn-home" data-text="backToStart"></button>
+    <audio id="suspect-music" loop preload="auto"></audio>
   </section>
 
   <div class="flash" id="flash"></div>
+
+  <audio id="bg-music" loop preload="auto"></audio>
+  <button class="sound-toggle" id="btn-sound" aria-label="Son">🔊</button>
 
   <script src="config.js"></script>
   <script src="app.js"></script>
