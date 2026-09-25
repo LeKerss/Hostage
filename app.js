@@ -105,10 +105,52 @@
   };
 
   // ---------------------------------------------------------------
-  //  Flow: start -> video -> pick -> assignment -> questions
+  //  Flow: start -> briefing -> video -> pick -> assignment -> questions
   // ---------------------------------------------------------------
-  $("btn-start").onclick = playIntro;
-  $("btn-rewind").onclick = playIntro;
+  $("btn-start").onclick = showBriefing;
+  $("btn-rewind").onclick = showBriefing;
+
+  const B = C.briefing || { lines: [] };
+  const briefingFullText = B.lines.join("\n");
+  let typeTimer = null;
+
+  if (B.photo) $("briefing-photo").src = B.photo;
+  $("briefing-figure").hidden = !B.photo;
+  $("briefing-photo").onerror = () => ($("briefing-figure").hidden = true);
+  $("briefing-caption").textContent = B.caption || "";
+
+  function showBriefing() {
+    if (!briefingFullText && !B.photo) return playIntro();
+    const el = $("briefing-text");
+    el.textContent = "";
+    el.classList.add("typing");
+    $("btn-briefing").hidden = true;
+    show("screen-briefing");
+
+    let i = 0;
+    clearTimeout(typeTimer);
+    const type = () => {
+      el.textContent = briefingFullText.slice(0, ++i);
+      const ch = briefingFullText[i - 1];
+      if (i < briefingFullText.length) {
+        typeTimer = setTimeout(type, ch === "\n" ? 350 : 38);
+      } else {
+        finishTyping();
+      }
+    };
+    typeTimer = setTimeout(type, 400);
+  }
+
+  function finishTyping() {
+    clearTimeout(typeTimer);
+    $("briefing-text").textContent = briefingFullText;
+    $("briefing-text").classList.remove("typing");
+    $("btn-briefing").hidden = false;
+  }
+
+  // Tap the dossier to skip the typing animation
+  $("dossier").onclick = finishTyping;
+  $("btn-briefing").onclick = playIntro;
 
   function playIntro() {
     if (!C.introVideo) return pickParticipant();

@@ -1,18 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0b10">
-  <title>Operation Hostage</title>
+  <meta name="theme-color" content="#0c0e0a">
+  <title>Opération Otage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Special+Elite&family=Share+Tech+Mono&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="bg"></div>
+  <div class="scanlines"></div>
 
-  <!-- START -->
+  <!-- ACCUEIL -->
   <section class="screen" id="screen-start">
+    <div class="hud-line"><span data-text="fileNumber"></span><span class="blink">● REC</span></div>
+    <div class="stamp" data-text="classifiedStamp"></div>
     <h1 class="title" data-text="appTitle"></h1>
+    <p class="tagline" data-text="tagline"></p>
     <button class="btn btn-primary" id="btn-start" data-text="startButton"></button>
     <div class="history" id="history" hidden>
       <span id="history-list"></span>
@@ -20,24 +27,46 @@
     </div>
   </section>
 
-  <!-- VIDEO -->
+  <!-- BRIEFING (dossier classifié) -->
+  <section class="screen" id="screen-briefing" hidden>
+    <article class="dossier" id="dossier">
+      <div class="stamp stamp-small" data-text="classifiedStamp"></div>
+      <figure class="polaroid" id="briefing-figure">
+        <img id="briefing-photo" alt="">
+        <figcaption id="briefing-caption"></figcaption>
+      </figure>
+      <p class="typewriter" id="briefing-text"></p>
+    </article>
+    <button class="btn btn-primary" id="btn-briefing" data-text="briefingButton"></button>
+  </section>
+
+  <!-- VIDÉO -->
   <section class="screen screen-video" id="screen-video" hidden>
     <video id="intro-video" playsinline preload="auto"></video>
+    <div class="video-tag" data-text="videoTag"></div>
     <button class="btn btn-ghost skip" id="btn-skip" data-text="skipVideo"></button>
   </section>
 
-  <!-- PICKING (roulette) -->
+  <!-- TIRAGE AU SORT -->
   <section class="screen" id="screen-pick" hidden>
     <h2 class="subtitle" id="pick-title"></h2>
-    <div class="avatar avatar-xl" id="pick-avatar"></div>
+    <div class="target">
+      <div class="avatar avatar-xl" id="pick-avatar"></div>
+      <div class="reticle"></div>
+    </div>
     <div class="pick-name" id="pick-name"></div>
   </section>
 
-  <!-- ASSIGNMENT -->
+  <!-- ORDRE DE MISSION -->
   <section class="screen" id="screen-assign" hidden>
-    <div class="avatar avatar-lg" id="assign-avatar"></div>
+    <div class="target">
+      <div class="avatar avatar-lg" id="assign-avatar"></div>
+    </div>
     <h2 class="pick-name" id="assign-name"></h2>
-    <p class="card assignment" id="assign-text"></p>
+    <div class="dossier">
+      <div class="dossier-head" data-text="orderTitle"></div>
+      <p class="assignment" id="assign-text"></p>
+    </div>
     <button class="btn btn-primary" id="btn-ready" data-text="readyButton"></button>
   </section>
 
@@ -55,23 +84,25 @@
     <div class="answers" id="answers"></div>
   </section>
 
-  <!-- GAME OVER -->
+  <!-- ÉCHEC -->
   <section class="screen screen-over" id="screen-over" hidden>
     <p class="over-reason" id="over-reason"></p>
-    <h1 class="title glitch" data-text="gameOverTitle"></h1>
-    <p class="card" data-text="gameOverText"></p>
+    <div class="stamp stamp-fail" data-text="gameOverTitle"></div>
+    <p class="panel" data-text="gameOverText"></p>
     <button class="btn btn-primary" id="btn-rewind" data-text="rewindButton"></button>
   </section>
 
-  <!-- VICTORY -->
+  <!-- VICTOIRE -->
   <section class="screen" id="screen-win" hidden>
+    <div class="stamp stamp-ok" data-text="victoryStamp"></div>
     <h1 class="title win" data-text="victoryTitle"></h1>
-    <p class="card" data-text="victoryText"></p>
+    <p class="panel" data-text="victoryText"></p>
     <button class="btn btn-primary" id="btn-reveal" data-text="revealButton"></button>
   </section>
 
-  <!-- SECRET -->
+  <!-- ANNONCE SECRÈTE -->
   <section class="screen screen-secret" id="screen-secret" hidden>
+    <div class="stamp stamp-ok" data-text="declassifiedStamp"></div>
     <h1 class="secret-title" id="secret-title"></h1>
     <img class="secret-image" id="secret-image" alt="">
     <button class="btn btn-ghost" id="btn-home" data-text="backToStart"></button>

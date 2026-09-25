@@ -1,45 +1,66 @@
 // =====================================================================
-//  QUIZ CONFIGURATION: this is the only file you need to edit.
-//  Put your images / videos / music in the "assets" folder and
-//  reference them here with a relative path like "assets/photo.jpg".
+//  CONFIGURATION DU QUIZ : c'est le seul fichier à modifier.
+//  Mets tes images / vidéos / musiques dans le dossier "assets" et
+//  référence-les ici avec un chemin relatif, ex. "assets/photo.jpg".
 // =====================================================================
 
 window.QUIZ_CONFIG = {
-  // Background image for the whole app (leave "" for a dark default)
-  backgroundImage: "assets/background.jpg",
+  // Image de fond de toute l'app ("" = fond militaire par défaut)
+  backgroundImage: "assets/fond.jpg",
 
-  // Intro video that raises the stakes (mp4 recommended for phones)
+  // Vidéo d'intro : toi avec l'otage (mp4 conseillé pour les téléphones).
+  // "" = pas de vidéo, on passe directement au tirage au sort.
   introVideo: "assets/intro.mp4",
 
-  // Seconds allowed per question
+  // Secondes par question
   timerSeconds: 10,
 
-  // Shuffle answer order on each question? (false = order as written)
+  // Mélanger l'ordre des réponses ? (false = ordre tel qu'écrit)
   shuffleAnswers: false,
 
   // ---------------------------------------------------------------
+  //  BRIEFING : dossier classifié affiché avant la vidéo.
+  //  photo : "preuve de vie" (ex. toi avec l'otage), "" pour aucune
+  //  lines : texte tapé à la machine, une ligne par élément
+  // ---------------------------------------------------------------
+  briefing: {
+    photo: "assets/preuve-de-vie.jpg",
+    caption: "Preuve de vie · il y a 2 heures",
+    lines: [
+      "RAPPORT N° 0417 · NIVEAU D'ACCRÉDITATION : OMEGA",
+      "",
+      "Ce soir, un otage a été enlevé.",
+      "Les ravisseurs n'accepteront qu'une seule chose :",
+      "10 bonnes réponses. Aucune erreur tolérée.",
+      "",
+      "Un agent va être désigné parmi vous.",
+      "Le sort de l'otage est entre ses mains.",
+    ],
+  },
+
+  // ---------------------------------------------------------------
   //  PARTICIPANTS
-  //  role: "player"    -> can be picked normally
-  //        "host"      -> (you) picked ONLY when nobody else is left
-  //        "protected" -> (your wife) never picked
+  //  role : "player"    -> peut être tiré au sort normalement
+  //         "host"      -> (toi) tiré UNIQUEMENT s'il ne reste personne
+  //         "protected" -> (ta femme) jamais tirée
   // ---------------------------------------------------------------
   participants: [
-    { name: "Alice",   photo: "assets/people/alice.jpg", role: "player" },
-    { name: "Bob",     photo: "assets/people/bob.jpg",   role: "player" },
+    { name: "Alice",   photo: "assets/people/alice.jpg",   role: "player" },
+    { name: "Bob",     photo: "assets/people/bob.jpg",     role: "player" },
     { name: "Charlie", photo: "assets/people/charlie.jpg", role: "player" },
-    { name: "Me",      photo: "assets/people/me.jpg",    role: "host" },
-    { name: "My wife", photo: "assets/people/wife.jpg",  role: "protected" },
+    { name: "Moi",     photo: "assets/people/moi.jpg",     role: "host" },
+    { name: "Ma femme", photo: "assets/people/femme.jpg",  role: "protected" },
   ],
 
   // ---------------------------------------------------------------
-  //  QUESTIONS (10 of them, but any number works)
-  //  - image:   optional supporting image for the question
-  //  - answers: each has a "text", and optionally an "image"
-  //  - correct: index of the right answer (0 = first answer)
+  //  QUESTIONS (10, mais n'importe quel nombre fonctionne)
+  //  - image   : image d'appui facultative pour la question
+  //  - answers : chaque réponse a un "text" et éventuellement une "image"
+  //  - correct : numéro de la bonne réponse (0 = la première)
   // ---------------------------------------------------------------
   questions: [
     {
-      question: "What is the capital of France?",
+      question: "Quelle est la capitale de la France ?",
       image: "",
       answers: [
         { text: "Paris" },
@@ -50,53 +71,61 @@ window.QUIZ_CONFIG = {
       correct: 0,
     },
     {
-      question: "Which one of these is a cat?",
+      question: "Lequel de ces animaux est un chat ?",
       image: "",
       answers: [
-        { text: "This one", image: "assets/questions/cat.jpg" },
-        { text: "That one", image: "assets/questions/dog.jpg" },
+        { text: "Celui-ci", image: "assets/questions/chat.jpg" },
+        { text: "Celui-là", image: "assets/questions/chien.jpg" },
       ],
       correct: 0,
     },
-    // ... add up to 10 (or more)
+    // ... ajoute jusqu'à 10 questions (ou plus)
   ],
 
   // ---------------------------------------------------------------
-  //  SECRET ANNOUNCEMENT (shown after all questions are right)
+  //  ANNONCE SECRÈTE (après 10 bonnes réponses)
   // ---------------------------------------------------------------
   secret: {
-    title: "WE HAVE BIG NEWS!",
+    title: "ON A UNE GRANDE NOUVELLE !",
     image: "assets/secret.jpg",
     music: "assets/secret.mp3",
   },
 
   // ---------------------------------------------------------------
-  //  TEXTS: translate / rewrite freely
+  //  TEXTES : modifie-les librement
+  //  {name}, {seconds}, {n}, {total}, {list} sont remplacés automatiquement
   // ---------------------------------------------------------------
   texts: {
-    appTitle: "OPERATION HOSTAGE",
-    startButton: "Start the mission",
-    skipVideo: "Skip ▸",
-    pickingTitle: "Choosing the agent…",
-    chosenIntro: "The chosen agent is…",
-    // {name} is replaced by the chosen participant's name
+    appTitle: "Opération Otage",
+    tagline: "Un otage. Dix questions. Aucune seconde chance.",
+    fileNumber: "DOSSIER N° 0417",
+    classifiedStamp: "Classifié",
+    startButton: "Ouvrir le dossier",
+    briefingButton: "Intercepter la transmission",
+    videoTag: "● TRANSMISSION INTERCEPTÉE",
+    skipVideo: "Passer ▸",
+    pickingTitle: "Désignation de l'agent…",
+    chosenIntro: "Cible verrouillée",
+    orderTitle: "Ordre de mission",
     assignment:
-      "{name}, the hostage's life is in your hands. " +
-      "You must read every question OUT LOUD and answer it yourself. " +
-      "Everyone else: you are FORBIDDEN to give the answer. " +
-      "One wrong answer, and it's over. You have {seconds} seconds per question.",
-    readyButton: "I'm ready",
+      "Agent {name}, la vie de l'otage est entre tes mains.\n" +
+      "Tu dois lire chaque question À VOIX HAUTE et y répondre seul(e).\n" +
+      "Tous les autres : il vous est INTERDIT de souffler la réponse.\n" +
+      "Une seule erreur, et c'est fini. Tu as {seconds} secondes par question.",
+    readyButton: "Mission acceptée",
     questionLabel: "Question {n} / {total}",
-    timeUp: "Time's up!",
-    wrongAnswer: "Wrong answer…",
-    gameOverTitle: "GAME OVER",
-    gameOverText: "Nobody knows what happened to the hostage…",
-    rewindButton: "⟲ Rewind time",
-    victoryTitle: "HOSTAGE FREED!",
-    victoryText: "You did it. And the hostage has something to tell you…",
-    revealButton: "Discover the secret",
-    backToStart: "Back to the beginning",
-    alreadyPlayed: "Already played: {list}",
-    resetHistory: "Reset",
+    timeUp: "Temps écoulé !",
+    wrongAnswer: "Mauvaise réponse…",
+    gameOverTitle: "Mission échouée",
+    gameOverText: "Personne ne sait ce qu'est devenu l'otage…",
+    rewindButton: "⟲ Remonter le temps",
+    victoryStamp: "Mission accomplie",
+    victoryTitle: "Otage libéré !",
+    victoryText: "Bravo, agent. Et l'otage a quelque chose à vous dire…",
+    revealButton: "Découvrir le secret",
+    declassifiedStamp: "Déclassifié",
+    backToStart: "Retour au début",
+    alreadyPlayed: "Agents déjà envoyés : {list}",
+    resetHistory: "Réinitialiser",
   },
 };
