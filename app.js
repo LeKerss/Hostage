@@ -240,7 +240,8 @@
   $("btn-rewind").onclick = () => {
     stopFailSound();
     showBriefing();
-    syncAudio(); // main music back on
+    bgm.currentTime = 0; // time rewinds: main music starts over
+    syncAudio();
   };
 
   const B = C.briefing || { lines: [] };
@@ -551,8 +552,11 @@
     $("code-error").textContent = "";
   });
 
+  let stopCodeFail = () => {};
+
   $("code-form").addEventListener("submit", (e) => {
     e.preventDefault();
+    stopCodeFail(); // no overlapping fail sounds on repeated tries
     if (normalizeCode(codeInput.value) === normalizeCode(C.hunt.code)) {
       codeInput.blur();
       clearInterval(huntInterval);
@@ -563,6 +567,7 @@
       void codeInput.offsetWidth; // restart shake animation
       codeInput.classList.add("invalid");
       $("code-error").textContent = T.codeWrong;
+      stopCodeFail = playSfx("wrong");
       if (navigator.vibrate) navigator.vibrate(300);
     }
   });

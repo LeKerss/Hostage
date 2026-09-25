@@ -115,7 +115,7 @@ window.QUIZ_CONFIG = {
   // ---------------------------------------------------------------
   hunt: {
     image: "assets/objet.jpg",
-    code: "1234",
+    code: "0427",
     seconds: 300,
     victoryDelaySeconds: 6,
   },
