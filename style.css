@@ -23,10 +23,13 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* Background colour on <html> only: a body background would paint
+   over the fixed #bg layer (z-index: -2) and hide the image. */
+html { background: var(--night); }
+
 html, body {
   margin: 0;
   height: 100%;
-  background: var(--night);
   color: var(--fg);
   font-family: var(--f-hud);
   overflow: hidden;

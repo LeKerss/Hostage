@@ -57,13 +57,19 @@
   function setAvatar(el, person) {
     el.textContent = "";
     el.style.backgroundImage = "";
+    el.dataset.person = person.name;
     const initials = () => {
       el.textContent = person.name.trim().charAt(0).toUpperCase();
     };
     if (!person.photo) return initials();
     el.style.backgroundImage = `url("${person.photo}")`;
     const probe = new Image();
-    probe.onerror = () => { el.style.backgroundImage = ""; initials(); };
+    probe.onerror = () => {
+      // Ignore late failures from a previous person (roulette spins fast)
+      if (el.dataset.person !== person.name) return;
+      el.style.backgroundImage = "";
+      initials();
+    };
     probe.src = person.photo;
   }
 
