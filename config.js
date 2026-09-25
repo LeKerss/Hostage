@@ -46,11 +46,16 @@ window.QUIZ_CONFIG = {
   //         "protected" -> (ta femme) jamais tirée
   // ---------------------------------------------------------------
   participants: [
-    { name: "Alice",   photo: "assets/people/alice.jpg",   role: "player" },
-    { name: "Bob",     photo: "assets/people/bob.jpg",     role: "player" },
-    { name: "Charlie", photo: "assets/people/charlie.jpg", role: "player" },
-    { name: "Moi",     photo: "assets/people/moi.jpg",     role: "host" },
-    { name: "Ma femme", photo: "assets/people/femme.jpg",  role: "protected" },
+    { name: "Ercan",   photo: "assets/people/Ercan.jpg",   role: "player" },
+    { name: "Paul",     photo: "assets/people/Paul.jpg",     role: "player" },
+    { name: "Dilara", photo: "assets/people/Dilara.jpg", role: "player" },
+    { name: "Mathilde", photo: "assets/people/Mathilde.jpg", role: "player" },
+    { name: "Manu", photo: "assets/people/Manu.jpg", role: "player" },
+    { name: "Sabine", photo: "assets/people/Sabine.jpg", role: "player" },
+    { name: "Tharssou", photo: "assets/people/Tharssou.jpg", role: "player" },
+    { name: "Sugitha", photo: "assets/people/Sugitha.jpg", role: "player" },
+    { name: "Annas",     photo: "assets/people/Annas.jpg",     role: "host" },
+    { name: "Imène", photo: "assets/people/Imene.jpg",  role: "protected" },
   ],
 
   // ---------------------------------------------------------------
