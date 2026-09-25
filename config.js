@@ -6,14 +6,14 @@
 
 window.QUIZ_CONFIG = {
   // Image de fond de toute l'app ("" = fond militaire par défaut)
-  backgroundImage: "assets/fond.jpg",
+  backgroundImage: "assets/bg.png",
 
   // Vidéo d'intro : toi avec l'otage (mp4 conseillé pour les téléphones).
   // "" = pas de vidéo, on passe directement au tirage au sort.
   introVideo: "assets/intro.mp4",
 
   // Secondes par question
-  timerSeconds: 10,
+  timerSeconds: 15,
 
   // Mélanger l'ordre des réponses ? (false = ordre tel qu'écrit)
   shuffleAnswers: false,
@@ -29,6 +29,7 @@ window.QUIZ_CONFIG = {
     lines: [
       "RAPPORT N° 0417 · NIVEAU D'ACCRÉDITATION : OMEGA",
       "",
+      "==== LIRE CE TEXTE A VOIX HAUTE ====",
       "Ce soir, un otage a été enlevé.",
       "Les ravisseurs n'accepteront qu'une seule chose :",
       "10 bonnes réponses. Aucune erreur tolérée.",
@@ -106,7 +107,7 @@ window.QUIZ_CONFIG = {
     skipVideo: "Passer ▸",
     pickingTitle: "Désignation de l'agent…",
     chosenIntro: "Cible verrouillée",
-    orderTitle: "Ordre de mission",
+    orderTitle: "Ordre de mission - LIRE A VOIX HAUTE",
     assignment:
       "Agent {name}, la vie de l'otage est entre tes mains.\n" +
       "Tu dois lire chaque question À VOIX HAUTE et y répondre seul(e).\n" +
@@ -125,7 +126,7 @@ window.QUIZ_CONFIG = {
     revealButton: "Découvrir le secret",
     declassifiedStamp: "Déclassifié",
     backToStart: "Retour au début",
-    alreadyPlayed: "Agents déjà envoyés : {list}",
+    alreadyPlayed: "Agents tombés au combat : {list}",
     resetHistory: "Réinitialiser",
   },
 };
