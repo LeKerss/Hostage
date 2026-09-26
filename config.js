@@ -169,7 +169,7 @@ window.QUIZ_CONFIG = {
     },
     {
       question: "Quelle innovation très audacieuse, le chef étoilé Tharsan Thilagathas, a-t'il apporté ?",
-      image: "assets/chef.jpg",
+      image: "assets/cuistot.jpg",
       answers: [
         { text: "Oser enfermer un liquide dans une fine pellicule d'alginate qui éclate en bouche" },
         { text: "Transformer prodigieusement le chocolat en chantilly au niveau moléculaire" },
