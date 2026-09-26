@@ -247,8 +247,8 @@ window.QUIZ_CONFIG = {
     assignment:
       "Agent {name}, la vie de l'otage est entre tes mains.\n" +
       "Tu dois lire chaque question À VOIX HAUTE et y répondre seul(e).\n" +
-      "Tous les autres : il vous est INTERDIT de souffler la réponse.\n" +
-      "Une seule erreur, et c'est fini. Tu as {seconds} secondes par question.",
+      "Tous les autres : il vous est INTERDIT de souffler la réponse. \nNe trichez pas, les ravisseurs le sauront.\n" +
+      "Une seule erreur, et c'est fini. Tu as {seconds} secondes par question. Le temps est compté !",
     readyButton: "Mission acceptée",
     questionLabel: "Question {n} / {total}",
     timeUp: "Temps écoulé !",
