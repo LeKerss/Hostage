@@ -27,7 +27,7 @@ window.QUIZ_CONFIG = {
   },
 
   // Secondes par question
-  timerSeconds: 15,
+  timerSeconds: 20,
 
   // Mélanger l'ordre des réponses ? (false = ordre tel qu'écrit)
   shuffleAnswers: false,
@@ -80,26 +80,125 @@ window.QUIZ_CONFIG = {
   // ---------------------------------------------------------------
   questions: [
     {
-      question: "Quelle est la capitale de la France ?",
+      question: "Ou est allé Mokobe ?",
       image: "",
       answers: [
-        { text: "Paris" },
-        { text: "Lyon" },
-        { text: "Marseille" },
-        { text: "Bordeaux" },
+        { text: "Au barber shop" },
+        { text: "A l'Opéra" },
+        { text: "En concert avec le 113" },
+        { text: "A Bordeaux" },
+      ],
+      correct: 1,
+    },
+    {
+      question: "Qu'est ce qu'ils mangent les bébés ?",
+      image: "",
+      answers: [
+        { text: "Du Lait" },
+        { text: "Des Biscuits" },
+        { text: "Des Boudoirs" },
+        { text: "Du Yogourre™" },
+      ],
+      correct: 3,
+    },
+    {
+      question: "Qui est la fille de la grand-mère du frère de ce chat ?",
+      image: "assets/spooky.png",
+      answers: [
+        { text: "Mimi" },
+        { text: "Mocha" },
+        { text: "Bulle" },
+        { text: "Gluten" },
+      ],
+      correct: 2,
+    },
+    {
+      question: "Qui a horreur de cet objet ?",
+      image: "assets/liquidevaisselle.jpg",
+      answers: [
+        { text: "Lui", image: "assets/people/Ercan.jpg" },
+        { text: "Elle de fou", image: "assets/people/Mathilde.jpg" },
+        { text: "totalement lui", image: "assets/people/Annas.jpg" },
+        { text: "C'est forcément lui", image: "assets/people/Manu.jpg" },
       ],
       correct: 0,
     },
     {
-      question: "Lequel de ces animaux est un chat ?",
-      image: "",
+      question: "Trouvez le nom de cet animal",
+      image: "assets/cafard.jpg",
       answers: [
-        { text: "Celui-ci", image: "assets/questions/chat.jpg" },
-        { text: "Celui-là", image: "assets/questions/chien.jpg" },
+        { text: "Super Cafard" },
+        { text: "El chiquito cafardito" },
+        { text: "Cafard Bolt" },
+        { text: "Tuco Cafaranca" },
+      ],
+      correct: 2,
+    },
+    {
+      question: "Quel est le métier de cet homme ?",
+      image: "assets/merlouf.jpg",
+      answers: [
+        { text: "Bouzelouf" },
+        { text: "Merlouf" },
+        { text: "Pignouf" },
+        { text: "Piffe-pouf" },
+      ],
+      correct: 1,
+    },
+    {
+      question: "Ou habite-t'il ?",
+      image: "assets/merlouf.jpg",
+      answers: [
+        { text: "A Casablanca" },
+        { text: "A Mexico DC" },
+        { text: "A Albufeira" },
+        { text: "A Châtelet-les-Halles" },
+      ],
+      correct: 3,
+    },
+    {
+      question: "Quelle innovation très audacieuse, le chef étoilé Tharsan Thilagathas, a-t'il apporté ?",
+      image: "assets/chef.jpg",
+      answers: [
+        { text: "Oser enfermer un liquide dans une fine pellicule d'alginate qui éclate en bouche" },
+        { text: "Transformer prodigieusement le chocolat en chantilly au niveau moléculaire" },
+        { text: "Avoir eu l'audace d'experimenter de folles fermentations" },
+        { text: "Faire revenir des oignons avant de cuire l'omelette" },
+      ],
+      correct: 3,
+    },
+    {
+      question: "Trouvez la bonne orthographe",
+      answers: [
+        { text: "Arshem Shake" },
+        { text: "Harlem Shake" },
+        { text: "Harlem Cheikh" },
+        { text: "Art l'aime chèque" },
       ],
       correct: 0,
     },
-    // ... ajoute jusqu'à 10 questions (ou plus)
+    {
+      question: "La prochaine question est très importante. Êtes-vous prêt ?",
+      image: "",
+      answers: [
+        { text: "Je suis entièrement prêt" },
+        { text: "Je commence à trembler" },
+        { text: "Donnez moi une pause" },
+        { text: "J'ai peur" },
+      ],
+      correct: 0,
+    },
+    {
+      question: "Samiam ?",
+      image: "",
+      answers: [
+        { text: "Demain" },
+        { text: "Non" },
+        { text: "Je mange au Quick" },
+        { text: "Oui" },
+      ],
+      correct: 3,
+    } 
   ],
 
   // ---------------------------------------------------------------
