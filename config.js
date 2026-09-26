@@ -102,6 +102,17 @@ window.QUIZ_CONFIG = {
       correct: 3,
     },
     {
+      question: "Que signifie le sigle 3G™?",
+      image: "",
+      answers: [
+        { text: "Grand Gorille Gainé" },
+        { text: "Gay Gogole Gitan" },
+        { text: "Gros Gourdin de Gueulard" },
+        { text: "C'est un truc de téléphones" },
+      ],
+      correct: 1,
+    },
+    {
       question: "Qui est la fille de la grand-mère du frère de ce chat ?",
       image: "assets/spooky.png",
       answers: [
