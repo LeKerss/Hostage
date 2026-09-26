@@ -46,7 +46,7 @@ window.QUIZ_CONFIG = {
       "==== LIRE CE TEXTE A VOIX HAUTE ====",
       "Ce soir, un otage a été enlevé.",
       "Les ravisseurs n'accepteront qu'une seule chose :",
-      "10 bonnes réponses. Aucune erreur tolérée.",
+      "Que des bonnes réponses. Aucune erreur tolérée.",
       "",
       "Un agent va être désigné parmi vous.",
       "Le sort de l'otage est entre ses mains.",
